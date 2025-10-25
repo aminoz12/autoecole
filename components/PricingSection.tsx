@@ -161,17 +161,18 @@ export default function PricingSection() {
                   ))}
                 </ul>
 
-                <motion.button
+                <motion.a
+                  href="/auth"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 ${
+                  className={`w-full py-4 rounded-xl font-semibold text-lg transition-all duration-300 block text-center ${
                     plan.popular
                       ? 'bg-primary text-white hover:bg-orange-600'
                       : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
                   }`}
                 >
                   {plan.buttonText}
-                </motion.button>
+                </motion.a>
               </div>
             </motion.div>
           ))}
@@ -193,22 +194,24 @@ export default function PricingSection() {
               Nos conseillers sont là pour vous aider à choisir la formule la plus adaptée à votre situation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.button
+              <motion.a
+                href="/auth"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="btn-primary flex items-center justify-center space-x-2"
               >
                 <Clock className="h-5 w-5" />
                 <span>Prendre rendez-vous</span>
-              </motion.button>
-              <motion.button
+              </motion.a>
+              <motion.a
+                href="/auth"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="btn-secondary flex items-center justify-center space-x-2"
               >
                 <Car className="h-5 w-5" />
                 <span>Essai gratuit</span>
-              </motion.button>
+              </motion.a>
             </div>
           </div>
         </motion.div>

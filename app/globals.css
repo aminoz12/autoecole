@@ -31,3 +31,104 @@
     @apply py-16 md:py-24;
   }
 }
+
+/* Rich Text Editor (Quill) Styles */
+.ql-toolbar {
+  background-color: #f9fafb !important;
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+  border: none !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 12px !important;
+}
+
+.ql-container {
+  border: none !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 16px !important;
+  min-height: 400px !important;
+}
+
+.ql-editor {
+  min-height: 400px !important;
+  padding: 20px !important;
+}
+
+.ql-editor.ql-blank::before {
+  color: #9ca3af !important;
+  font-style: normal !important;
+}
+
+/* Quill toolbar buttons */
+.ql-toolbar button {
+  transition: all 0.2s !important;
+}
+
+.ql-toolbar button:hover {
+  background-color: #e5e7eb !important;
+  border-radius: 4px !important;
+}
+
+.ql-toolbar button.ql-active {
+  background-color: #fed7aa !important;
+  border-radius: 4px !important;
+  color: #f97316 !important;
+}
+
+/* Quill dropdown */
+.ql-toolbar .ql-picker-label {
+  transition: all 0.2s !important;
+}
+
+.ql-toolbar .ql-picker-label:hover {
+  background-color: #e5e7eb !important;
+  border-radius: 4px !important;
+}
+
+/* Content styling inside editor */
+.ql-editor h1 {
+  font-size: 2em !important;
+  font-weight: 700 !important;
+  margin-bottom: 0.5em !important;
+}
+
+.ql-editor h2 {
+  font-size: 1.5em !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5em !important;
+}
+
+.ql-editor h3 {
+  font-size: 1.25em !important;
+  font-weight: 600 !important;
+  margin-bottom: 0.5em !important;
+}
+
+.ql-editor p {
+  margin-bottom: 1em !important;
+}
+
+.ql-editor ul, .ql-editor ol {
+  margin-bottom: 1em !important;
+  padding-left: 1.5em !important;
+}
+
+.ql-editor blockquote {
+  border-left: 4px solid #f97316 !important;
+  padding-left: 1em !important;
+  margin: 1em 0 !important;
+  color: #6b7280 !important;
+}
+
+.ql-editor pre {
+  background-color: #1f2937 !important;
+  color: #f3f4f6 !important;
+  padding: 1em !important;
+  border-radius: 0.5rem !important;
+  overflow-x: auto !important;
+}
+
+.ql-editor a {
+  color: #f97316 !important;
+  text-decoration: underline !important;
+}

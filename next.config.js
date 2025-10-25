@@ -1,12 +1,46 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com', 'via.placeholder.com'],
-    unoptimized: true, // Required for static export
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+      },
+    ],
+    formats: ['image/avif', 'image/webp'],
+    unoptimized: false, // Netlify supports Next.js image optimization
   },
-  output: 'export', // Enable static export
-  trailingSlash: true, // Add trailing slashes to URLs
-  distDir: 'dist', // Output directory for static export
+  trailingSlash: false,
+  transpilePackages: ['@supabase/ssr', '@supabase/supabase-js'],
+  
+  // Optimize webpack for better memory usage
+  webpack: (config, { isServer }) => {
+    // Reduce memory pressure
+    config.optimization = {
+      ...config.optimization,
+      moduleIds: 'deterministic',
+    }
+    
+    // Don't bundle react-quill on server side
+    if (isServer) {
+      config.externals = [...(config.externals || []), 'react-quill']
+    }
+    
+    return config
+  },
+  
+  // Experimental features for better performance
+  experimental: {
+    optimizePackageImports: ['react-quill', 'lucide-react', 'framer-motion'],
+  },
 }
 
 module.exports = nextConfig

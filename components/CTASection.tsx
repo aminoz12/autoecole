@@ -1,9 +1,28 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Phone, Calendar, Car } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 export default function CTASection() {
+  const [user, setUser] = useState<any>(null)
+  const supabase = createClient()
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+  }, [])
+
+  const handleReservationClick = () => {
+    if (user) {
+      window.location.href = '/reserver'
+    } else {
+      window.location.href = '/auth'
+    }
+  }
+
   return (
     <section className="section-padding bg-gradient-to-br from-primary to-orange-600 relative overflow-hidden">
       {/* Background Pattern */}
@@ -56,6 +75,7 @@ export default function CTASection() {
             <motion.button
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              onClick={handleReservationClick}
               className="bg-white text-primary px-8 py-4 rounded-xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center space-x-3 group"
             >
               <span>Réserver ma leçon d'essai</span>

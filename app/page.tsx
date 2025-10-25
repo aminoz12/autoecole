@@ -10,13 +10,24 @@ import InsuranceSection from '@/components/InsuranceSection'
 import PointsRecoverySection from '@/components/PointsRecoverySection'
 import PricingSection from '@/components/PricingSection'
 import CPFFinancingSection from '@/components/CPFFinancingSection'
-import TrustSection from '@/components/TrustSection'
 import InstructorsPreview from '@/components/InstructorsPreview'
+import BlogPreview from '@/components/BlogPreview'
 import FAQSection from '@/components/FAQSection'
 import CTASection from '@/components/CTASection'
 import Footer from '@/components/Footer'
+import { createClient } from '@/lib/supabase/server'
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient()
+
+  // Fetch featured blog posts
+  const { data: featuredPosts } = await supabase
+    .from('blog_posts')
+    .select('*')
+    .eq('is_published', true)
+    .eq('is_featured', true)
+    .order('published_at', { ascending: false })
+    .limit(5)
   return (
     <main className="min-h-screen">
       {/* Header - Sticky navigation */}
@@ -55,11 +66,11 @@ export default function Home() {
       {/* CPF Financing Section - CPF financing promotion */}
       <CPFFinancingSection />
       
-      {/* Trust Section - Reviews and testimonials */}
-      <TrustSection />
-      
       {/* Instructors Preview - Meet our team */}
       <InstructorsPreview />
+      
+      {/* Blog Preview - Latest articles */}
+      <BlogPreview posts={featuredPosts || []} />
       
       {/* FAQ Section - Common questions */}
       <FAQSection />

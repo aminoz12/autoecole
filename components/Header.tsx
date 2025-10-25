@@ -2,12 +2,33 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Menu, X, Car, Phone, MapPin } from 'lucide-react'
+import { Menu, X, Car, Phone, MapPin, User } from 'lucide-react'
 import Image from 'next/image'
+import { createClient } from '@/lib/supabase/client'
+import AuthModal from './auth/AuthModal'
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const supabase = createClient()
+
+  useEffect(() => {
+    // Check if user is logged in
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,7 +42,7 @@ export default function Header() {
   const navItems = [
     { name: 'Formations', href: '#formations' },
     { name: 'Tarifs', href: '#tarifs' },
-    { name: 'Moniteurs', href: '#moniteurs' },
+    { name: 'Blog', href: '/blog' },
     { name: 'À propos', href: '#apropos' },
     { name: 'Contact', href: '#contact' },
   ]
@@ -80,13 +101,26 @@ export default function Header() {
               <MapPin className="h-4 w-4" />
               <span>Paris & Banlieue</span>
             </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="btn-primary"
-            >
-              Réserver une leçon
-            </motion.button>
+            {user ? (
+              <motion.a
+                href="/dashboard"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="btn-primary flex items-center gap-2"
+              >
+                <User className="h-4 w-4" />
+                Mon Espace
+              </motion.a>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsAuthModalOpen(true)}
+                className="btn-primary"
+              >
+                Réserver une leçon
+              </motion.button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -129,13 +163,28 @@ export default function Header() {
                 <Phone className="h-4 w-4" />
                 <span>01 23 45 67 89</span>
               </div>
-              <button className="btn-primary w-full">
-                Réserver une leçon
-              </button>
+              {user ? (
+                <a href="/dashboard" className="btn-primary w-full block text-center">
+                  Mon Espace
+                </a>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsAuthModalOpen(true)
+                    setIsMobileMenuOpen(false)
+                  }}
+                  className="btn-primary w-full"
+                >
+                  Réserver une leçon
+                </button>
+              )}
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </motion.header>
   )
 }

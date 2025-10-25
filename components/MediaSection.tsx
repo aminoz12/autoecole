@@ -39,7 +39,7 @@ export default function MediaSection() {
         <div className="relative overflow-hidden">
           <motion.div
             animate={{
-              x: ['0%', '-100%'],
+              x: ['0%', '-50%'],
             }}
             transition={{
               duration: 20,
