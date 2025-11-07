@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Check, Award, CreditCard, Users, Star } from 'lucide-react'
+import Image from 'next/image'
+import { Check } from 'lucide-react'
 
 export default function PointsRecoverySection() {
   const features = [
@@ -82,12 +83,14 @@ export default function PointsRecoverySection() {
             viewport={{ once: true }}
             className="flex justify-center"
           >
-            <div className="relative w-80 h-80 bg-gradient-to-br from-red-100 to-blue-100 rounded-2xl p-6 shadow-lg flex items-center justify-center">
-              <div className="text-center">
-                <Award className="h-16 w-16 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Formation</h3>
-                <p className="text-gray-600">Continue</p>
-              </div>
+            <div className="relative w-full max-w-lg">
+              <Image
+                src="/im3.png"
+                alt="Récupération de points"
+                width={600}
+                height={600}
+                className="w-full h-auto"
+              />
             </div>
           </motion.div>
         </div>

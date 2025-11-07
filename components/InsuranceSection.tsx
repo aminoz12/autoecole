@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Check, Shield, Phone, Clock, Award } from 'lucide-react'
+import Image from 'next/image'
+import { Check } from 'lucide-react'
 
 export default function InsuranceSection() {
   const features = [
@@ -82,12 +83,14 @@ export default function InsuranceSection() {
             viewport={{ once: true }}
             className="flex justify-center"
           >
-            <div className="relative w-80 h-80 bg-gradient-to-br from-orange-100 to-purple-100 rounded-2xl p-6 shadow-lg flex items-center justify-center">
-              <div className="text-center">
-                <Shield className="h-16 w-16 text-primary mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Assurance</h3>
-                <p className="text-gray-600">Sécurisée</p>
-              </div>
+            <div className="relative w-full max-w-lg">
+              <Image
+                src="/im2.png"
+                alt="Assurance auto"
+                width={600}
+                height={600}
+                className="w-full h-auto"
+              />
             </div>
           </motion.div>
         </div>

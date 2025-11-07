@@ -7,6 +7,11 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import QuizComponent from './QuizComponent'
 import { priorityRulesQuiz, roadSignsQuiz, generalCodeQuiz, emergencySituationsQuiz, type Question } from './quizData'
+import WhatsAppButton from '@/components/WhatsAppButton'
+import TestimonialForm from './TestimonialForm'
+import QuizLeaderboard from './QuizLeaderboard'
+import MockExamComponent from './MockExamComponent'
+import CalendarView from './CalendarView'
 
 interface Reservation {
   id: string
@@ -47,9 +52,10 @@ interface DashboardContentProps {
 export default function DashboardContent({ user, profile, reservations, quizResults: initialQuizResults }: DashboardContentProps) {
   const supabase = createClient()
   const [cancelling, setCancelling] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'reservations' | 'courses' | 'quiz'>('reservations')
+  const [activeTab, setActiveTab] = useState<'reservations' | 'calendar' | 'courses' | 'quiz'>('reservations')
   const [activeQuiz, setActiveQuiz] = useState<{ title: string; id: string; questions: Question[] } | null>(null)
   const [quizResults, setQuizResults] = useState<QuizResult[]>(initialQuizResults)
+  const [showMockExam, setShowMockExam] = useState(false)
 
   // Calculate quiz statistics
   const totalQuizzesTaken = quizResults.length
@@ -276,7 +282,18 @@ export default function DashboardContent({ user, profile, reservations, quizResu
               }`}
             >
               <Calendar className="w-5 h-5" />
-              Mes Réservations
+              Liste
+            </button>
+            <button
+              onClick={() => setActiveTab('calendar')}
+              className={`flex-1 px-6 py-4 font-semibold transition-colors flex items-center justify-center gap-2 ${
+                activeTab === 'calendar'
+                  ? 'text-primary border-b-2 border-primary bg-primary/5'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              <Calendar className="w-5 h-5" />
+              Calendrier
             </button>
             <button
               onClick={() => setActiveTab('courses')}
@@ -305,110 +322,122 @@ export default function DashboardContent({ user, profile, reservations, quizResu
 
         {/* Reservations List */}
         {activeTab === 'reservations' && (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-900">Mes Réservations</h2>
-          </div>
+          <>
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900">Mes Réservations</h2>
+              </div>
 
-          {reservations.length === 0 ? (
-            <div className="p-12 text-center">
-              <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Aucune réservation
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Vous n'avez pas encore réservé de leçon
-              </p>
-              <Link
-                href="/reserver"
-                className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-all"
-              >
-                <Plus className="w-5 h-5" />
-                Réserver maintenant
-              </Link>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-200">
-              {reservations.map((reservation, index) => (
-                <motion.div
-                  key={reservation.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="p-6 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                            reservation.status
-                          )}`}
-                        >
-                          {getStatusText(reservation.status)}
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          {getLessonTypeText(reservation.lessons.lesson_type)}
-                        </span>
-                      </div>
-
-                      <div className="grid md:grid-cols-2 gap-3 text-sm">
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Calendar className="w-4 h-4" />
-                          <span>
-                            {new Date(reservation.lessons.lesson_date).toLocaleDateString('fr-FR', {
-                              weekday: 'long',
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <Clock className="w-4 h-4" />
-                          <span>
-                            {reservation.lessons.start_time} - {reservation.lessons.end_time}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-gray-700">
-                          <User className="w-4 h-4" />
-                          <span>Moniteur: {reservation.lessons.instructors.name}</span>
-                        </div>
-                        {reservation.lessons.vehicles && (
-                          <div className="flex items-center gap-2 text-gray-700">
-                            <Car className="w-4 h-4" />
-                            <span>
-                              {reservation.lessons.vehicles.model} (
-                              {reservation.lessons.vehicles.transmission_type})
+              {reservations.length === 0 ? (
+                <div className="p-12 text-center">
+                  <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Aucune réservation
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Vous n'avez pas encore réservé de leçon
+                  </p>
+                  <Link
+                    href="/reserver"
+                    className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-all"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Réserver maintenant
+                  </Link>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-200">
+                  {reservations.map((reservation, index) => (
+                    <motion.div
+                      key={reservation.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="p-6 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span
+                              className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                                reservation.status
+                              )}`}
+                            >
+                              {getStatusText(reservation.status)}
+                            </span>
+                            <span className="text-sm text-gray-600">
+                              {getLessonTypeText(reservation.lessons.lesson_type)}
                             </span>
                           </div>
+
+                          <div className="grid md:grid-cols-2 gap-3 text-sm">
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <Calendar className="w-4 h-4" />
+                              <span>
+                                {new Date(reservation.lessons.lesson_date).toLocaleDateString('fr-FR', {
+                                  weekday: 'long',
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                })}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <Clock className="w-4 h-4" />
+                              <span>
+                                {reservation.lessons.start_time} - {reservation.lessons.end_time}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-gray-700">
+                              <User className="w-4 h-4" />
+                              <span>Moniteur: {reservation.lessons.instructors.name}</span>
+                            </div>
+                            {reservation.lessons.vehicles && (
+                              <div className="flex items-center gap-2 text-gray-700">
+                                <Car className="w-4 h-4" />
+                                <span>
+                                  {reservation.lessons.vehicles.model} (
+                                  {reservation.lessons.vehicles.transmission_type})
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {(reservation.status === 'pending' || reservation.status === 'confirmed') && (
+                          <button
+                            onClick={() =>
+                              handleCancelReservation(reservation.id, (reservation.lessons as any).id)
+                            }
+                            disabled={cancelling === reservation.id}
+                            className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
+                          >
+                            <X className="w-4 h-4" />
+                            Annuler
+                          </button>
                         )}
                       </div>
-                    </div>
-
-                    {(reservation.status === 'pending' || reservation.status === 'confirmed') && (
-                      <button
-                        onClick={() =>
-                          handleCancelReservation(reservation.id, (reservation.lessons as any).id)
-                        }
-                        disabled={cancelling === reservation.id}
-                        className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2"
-                      >
-                        <X className="w-4 h-4" />
-                        Annuler
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
+
+            {/* Testimonial Form */}
+            <div className="mt-8">
+              <TestimonialForm user={user} profile={profile} />
+            </div>
+          </>
+        )}
+
+        {/* Calendar View */}
+        {activeTab === 'calendar' && (
+          <CalendarView reservations={reservations} />
         )}
 
         {/* Online Courses Section */}
         {activeTab === 'courses' && (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-bold text-gray-900">Cours en ligne - Code de la route</h2>
             <p className="text-gray-600 mt-1">Apprenez le code de la route à votre rythme</p>
@@ -566,12 +595,12 @@ export default function DashboardContent({ user, profile, reservations, quizResu
               </motion.div>
             </div>
           </div>
-        </div>
+          </div>
         )}
 
         {/* Quiz Section */}
         {activeTab === 'quiz' && (
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-200">
             <h2 className="text-xl font-bold text-gray-900">Quiz - Testez vos connaissances</h2>
             <p className="text-gray-600 mt-1">Entraînez-vous avec nos quiz thématiques</p>
@@ -726,12 +755,41 @@ export default function DashboardContent({ user, profile, reservations, quizResu
                 </div>
               </motion.div>
 
+              {/* Mock Exam Card - PREMIUM */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="relative border-2 border-primary rounded-lg p-6 bg-gradient-to-br from-primary/5 to-primary/10 hover:shadow-lg transition-shadow overflow-hidden"
+              >
+                <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  EXAMEN BLANC
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-gradient-to-br from-primary to-primary/80 rounded-lg">
+                    <Award className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-2">Examen Blanc - 40 Questions</h3>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Conditions réelles d'examen • 30 minutes • 35 bonnes réponses requises
+                    </p>
+                    <button 
+                      onClick={() => setShowMockExam(true)}
+                      className="w-full bg-gradient-to-r from-primary to-primary/80 text-white py-3 rounded-lg hover:shadow-lg transition-all font-semibold"
+                    >
+                      Lancer l'examen blanc
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+
               {/* Quiz Stats Card */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-primary transition-colors md:col-span-2"
+                className="border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-primary transition-colors"
               >
                 <div className="text-center">
                   <div className="inline-flex p-4 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-full mb-4">
@@ -759,8 +817,13 @@ export default function DashboardContent({ user, profile, reservations, quizResu
                 </div>
               </motion.div>
             </div>
+
+            {/* Quiz Leaderboard */}
+            <div className="mt-8">
+              <QuizLeaderboard />
+            </div>
           </div>
-        </div>
+          </div>
         )}
       </div>
 
@@ -778,6 +841,20 @@ export default function DashboardContent({ user, profile, reservations, quizResu
           }}
         />
       )}
+
+      {/* Mock Exam Modal */}
+      {showMockExam && (
+        <MockExamComponent
+          onClose={async () => {
+            setShowMockExam(false)
+            setActiveTab('quiz')
+            await refetchQuizResults()
+          }}
+        />
+      )}
+      
+      {/* WhatsApp Floating Button */}
+      <WhatsAppButton />
     </div>
   )
 }

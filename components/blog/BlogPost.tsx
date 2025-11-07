@@ -1,9 +1,10 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Calendar, Clock, Tag, Eye, ArrowLeft } from 'lucide-react'
+import { Calendar, Clock, Tag, Eye, ArrowLeft, Share2, Facebook, Twitter, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 interface BlogPost {
   id: string
@@ -31,6 +32,43 @@ export default function BlogPost({ post, relatedPosts }: BlogPostProps) {
       month: 'long',
       year: 'numeric'
     })
+  }
+
+  const getCategoryColor = (category: string) => {
+    const colors: { [key: string]: string } = {
+      'Permis': 'bg-blue-100 text-blue-700',
+      'Code': 'bg-purple-100 text-purple-700',
+      'Conduite': 'bg-green-100 text-green-700',
+      'Conseils': 'bg-amber-100 text-amber-700',
+      'Actualités': 'bg-red-100 text-red-700',
+      'Sécurité': 'bg-orange-100 text-orange-700',
+      'Assurance': 'bg-cyan-100 text-cyan-700',
+    }
+    return colors[category] || 'bg-primary/10 text-primary'
+  }
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : ''
+  
+  const shareOnWhatsApp = () => {
+    const text = encodeURIComponent(`${post.title} - ${shareUrl}`)
+    window.open(`https://wa.me/?text=${text}`, '_blank')
+    toast.success('Partage sur WhatsApp !')
+  }
+
+  const shareOnFacebook = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank')
+    toast.success('Partage sur Facebook !')
+  }
+
+  const shareOnTwitter = () => {
+    const text = encodeURIComponent(post.title)
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(shareUrl)}`, '_blank')
+    toast.success('Partage sur Twitter !')
+  }
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(shareUrl)
+    toast.success('Lien copié dans le presse-papier !')
   }
 
   return (
@@ -62,7 +100,7 @@ export default function BlogPost({ post, relatedPosts }: BlogPostProps) {
 
             <div className="p-8">
               {/* Category */}
-              <div className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-4">
+              <div className={`inline-block px-3 py-1 text-sm font-semibold rounded-full mb-4 ${getCategoryColor(post.category)}`}>
                 {post.category}
               </div>
 
@@ -100,6 +138,54 @@ export default function BlogPost({ post, relatedPosts }: BlogPostProps) {
                 className="prose prose-lg max-w-none"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
+
+              {/* Social Sharing */}
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <div className="flex items-center justify-between flex-wrap gap-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <Share2 className="w-5 h-5" />
+                    Partager cet article
+                  </h3>
+                  <div className="flex items-center gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={shareOnWhatsApp}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#25D366] text-white rounded-lg hover:bg-[#25D366]/90 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      WhatsApp
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={shareOnFacebook}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white rounded-lg hover:bg-[#1877F2]/90 transition-colors"
+                    >
+                      <Facebook className="w-4 h-4" />
+                      Facebook
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={shareOnTwitter}
+                      className="flex items-center gap-2 px-4 py-2 bg-[#1DA1F2] text-white rounded-lg hover:bg-[#1DA1F2]/90 transition-colors"
+                    >
+                      <Twitter className="w-4 h-4" />
+                      Twitter
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={copyLink}
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                      <Share2 className="w-4 h-4" />
+                      Copier le lien
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
 
               {/* Tags */}
               {post.tags && post.tags.length > 0 && (
@@ -167,6 +253,61 @@ export default function BlogPost({ post, relatedPosts }: BlogPostProps) {
           </div>
         </div>
       </div>
+
+      {/* Related Articles Section at Bottom */}
+      {relatedPosts.length > 0 && (
+        <div className="mt-16">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">
+            Articles similaires
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedPosts.map((relatedPost) => (
+              <Link
+                key={relatedPost.id}
+                href={`/blog/${relatedPost.slug}`}
+                className="group"
+              >
+                <motion.article
+                  whileHover={{ y: -5 }}
+                  className="bg-white rounded-xl shadow-sm overflow-hidden h-full transition-shadow hover:shadow-md"
+                >
+                  {relatedPost.featured_image && (
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={relatedPost.featured_image}
+                        alt={relatedPost.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <div className={`inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3 ${getCategoryColor(relatedPost.category)}`}>
+                      {relatedPost.category}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {relatedPost.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      {relatedPost.excerpt}
+                    </p>
+                    <div className="flex items-center gap-4 text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>{formatDate(relatedPost.published_at)}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Eye className="w-4 h-4" />
+                        <span>{relatedPost.views_count}</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.article>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

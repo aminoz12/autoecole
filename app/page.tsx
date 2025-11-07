@@ -3,7 +3,6 @@ import PromoBanner from '@/components/PromoBanner'
 import HeroSection from '@/components/HeroSection'
 import FeaturesSection from '@/components/FeaturesSection'
 import MissionSection from '@/components/MissionSection'
-import MediaSection from '@/components/MediaSection'
 import CodeTrainingSection from '@/components/CodeTrainingSection'
 import DrivingSchoolSection from '@/components/DrivingSchoolSection'
 import InsuranceSection from '@/components/InsuranceSection'
@@ -12,9 +11,11 @@ import PricingSection from '@/components/PricingSection'
 import CPFFinancingSection from '@/components/CPFFinancingSection'
 import InstructorsPreview from '@/components/InstructorsPreview'
 import BlogPreview from '@/components/BlogPreview'
+import TestimonialsSection from '@/components/TestimonialsSection'
 import FAQSection from '@/components/FAQSection'
 import CTASection from '@/components/CTASection'
 import Footer from '@/components/Footer'
+import WhatsAppButton from '@/components/WhatsAppButton'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function Home() {
@@ -28,6 +29,16 @@ export default async function Home() {
     .eq('is_featured', true)
     .order('published_at', { ascending: false })
     .limit(5)
+
+  // Fetch featured testimonials
+  const { data: testimonials } = await supabase
+    .from('testimonials')
+    .select('*')
+    .eq('is_approved', true)
+    .eq('is_featured', true)
+    .order('created_at', { ascending: false })
+    .limit(6)
+
   return (
     <main className="min-h-screen">
       {/* Header - Sticky navigation */}
@@ -44,9 +55,6 @@ export default async function Home() {
       
       {/* Mission Section - Our mission and values */}
       <MissionSection />
-      
-      {/* Media Section - Media logos */}
-      <MediaSection />
       
       {/* Code Training Section - Code training app */}
       <CodeTrainingSection />
@@ -72,6 +80,9 @@ export default async function Home() {
       {/* Blog Preview - Latest articles */}
       <BlogPreview posts={featuredPosts || []} />
       
+      {/* Testimonials Section - Customer reviews */}
+      <TestimonialsSection testimonials={testimonials || []} />
+      
       {/* FAQ Section - Common questions */}
       <FAQSection />
       
@@ -80,6 +91,9 @@ export default async function Home() {
       
       {/* Footer - Links and contact info */}
       <Footer />
+      
+      {/* WhatsApp Floating Button */}
+      <WhatsAppButton />
     </main>
   )
 }

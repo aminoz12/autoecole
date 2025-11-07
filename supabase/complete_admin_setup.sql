@@ -15,7 +15,9 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
   full_name TEXT,
+  email TEXT,
   phone TEXT,
+  is_admin BOOLEAN DEFAULT false NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -202,19 +204,23 @@ CREATE POLICY "Users can update own progress" ON public.online_courses_progress 
 -- ============================================
 
 -- Create/update admin profile
-INSERT INTO public.profiles (id, full_name, phone, created_at, updated_at)
+INSERT INTO public.profiles (id, full_name, email, phone, is_admin, created_at, updated_at)
 SELECT 
   u.id,
-  'Walid',
+  'Admin User',
+  u.email,
   '+33600000000',
+  true,
   NOW(),
   NOW()
 FROM auth.users u
 WHERE u.email = 'walid@autoecole-admin.com'
 ON CONFLICT (id) DO UPDATE 
 SET 
-  full_name = 'Walid',
+  full_name = 'Admin User',
+  email = EXCLUDED.email,
   phone = '+33600000000',
+  is_admin = true,
   updated_at = NOW();
 
 -- Update admin password

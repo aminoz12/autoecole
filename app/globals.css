@@ -12,6 +12,28 @@
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
   }
+
+  /* Smooth page transitions */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Better focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid #f97316;
+    outline-offset: 2px;
+  }
+
+  /* Remove transitions for reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {

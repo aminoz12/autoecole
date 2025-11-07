@@ -42,12 +42,33 @@ export default async function AdminPage() {
     console.error('Error fetching quiz results:', quizError)
   }
 
+  // Fetch all user profiles
+  const { data: allProfiles, error: profilesError } = await supabase
+    .from('profiles')
+    .select('*')
+    .order('created_at', { ascending: false })
+  
+  if (profilesError) {
+    console.error('Error fetching profiles:', profilesError)
+  }
+
+  // Filter out the current admin user and any profiles without proper user data
+  // Admin users typically have specific emails or can be identified by the current user
+  const profiles = allProfiles?.filter(profile => 
+    profile.id !== user.id && // Exclude the current logged-in admin
+    profile.full_name !== 'Admin User' && // Exclude profiles with admin name
+    profile.email !== 'walid@autoecole-admin.com' &&
+    profile.email !== 'admin@autoecole.local' &&
+    profile.email !== 'test@admin.com'
+  ) || []
+
   return (
     <AdminDashboard
       user={user}
       reservations={reservations || []}
       blogPosts={blogPosts || []}
       quizResults={quizResults || []}
+      profiles={profiles || []}
     />
   )
 }

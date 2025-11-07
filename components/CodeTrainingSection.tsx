@@ -1,7 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Check, Flame, Calendar, Smartphone } from 'lucide-react'
+import Image from 'next/image'
+import { Check } from 'lucide-react'
 
 export default function CodeTrainingSection() {
   const features = [
@@ -74,7 +75,7 @@ export default function CodeTrainingSection() {
             </motion.button>
           </motion.div>
 
-          {/* Right Column - Mobile App Mockup */}
+          {/* Right Column - Image */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -82,54 +83,14 @@ export default function CodeTrainingSection() {
             viewport={{ once: true }}
             className="flex justify-center"
           >
-            <div className="relative w-64 sm:w-72 h-[400px] sm:h-[500px] bg-gray-100 rounded-3xl p-4 sm:p-6 shadow-2xl">
-              {/* App Header */}
-              <div className="text-center mb-6">
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Code</h3>
-                
-                {/* Stats */}
-                <div className="space-y-2 mb-4 sm:mb-6">
-                  <div className="flex items-center justify-center space-x-2 text-xs sm:text-sm text-gray-600">
-                    <Flame className="h-3 w-3 sm:h-4 sm:w-4 text-orange-500" />
-                    <span>0 minute cette semaine</span>
-                  </div>
-                  <div className="flex items-center justify-center space-x-2 text-xs sm:text-sm text-gray-600">
-                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
-                    <span>0 place d&apos;examen au code valide</span>
-                  </div>
-                </div>
-
-                {/* Navigation Tabs */}
-                <div className="flex bg-gray-200 rounded-lg p-1 mb-4 sm:mb-6">
-                  <div className="flex-1 bg-primary text-white py-1 sm:py-2 px-2 sm:px-4 rounded-md text-xs sm:text-sm font-medium text-center">
-                    Révisions
-                  </div>
-                  <div className="flex-1 py-1 sm:py-2 px-2 sm:px-4 text-xs sm:text-sm text-gray-600 text-center">
-                    Entraînement
-                  </div>
-                  <div className="flex-1 py-1 sm:py-2 px-2 sm:px-4 text-xs sm:text-sm text-gray-600 text-center">
-                    Examen
-                  </div>
-                </div>
-              </div>
-
-              {/* Phone Screen Content */}
-              <div className="bg-gradient-to-br from-yellow-400 via-orange-500 to-green-500 rounded-2xl h-32 sm:h-48 mb-3 sm:mb-4 flex items-center justify-center">
-                <Smartphone className="h-12 w-12 sm:h-16 sm:w-16 text-white opacity-80" />
-              </div>
-
-              {/* Bottom Content */}
-              <div className="text-center">
-                <h4 className="text-sm sm:text-base lg:text-lg font-semibold text-gray-900 mb-2">Top départ !</h4>
-                <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
-                  <div className="h-2 bg-gray-300 rounded-full"></div>
-                  <div className="h-2 bg-gray-300 rounded-full w-3/4 mx-auto"></div>
-                  <div className="h-2 bg-gray-300 rounded-full w-1/2 mx-auto"></div>
-                </div>
-              </div>
-
-              {/* Bottom Navigation Bar */}
-              <div className="absolute bottom-0 left-0 right-0 h-12 bg-gray-900 rounded-b-3xl"></div>
+            <div className="relative w-full max-w-lg">
+              <Image
+                src="/im0.png"
+                alt="Code training"
+                width={600}
+                height={600}
+                className="w-full h-auto"
+              />
             </div>
           </motion.div>
         </div>

@@ -28,6 +28,19 @@ export default function BlogPreview({ posts }: BlogPreviewProps) {
     })
   }
 
+  const getCategoryColor = (category: string) => {
+    const colors: { [key: string]: string } = {
+      'Permis': 'bg-blue-100 text-blue-700',
+      'Code': 'bg-purple-100 text-purple-700',
+      'Conduite': 'bg-green-100 text-green-700',
+      'Conseils': 'bg-amber-100 text-amber-700',
+      'Actualités': 'bg-red-100 text-red-700',
+      'Sécurité': 'bg-orange-100 text-orange-700',
+      'Assurance': 'bg-cyan-100 text-cyan-700',
+    }
+    return colors[category] || 'bg-primary/10 text-primary'
+  }
+
   return (
     <section className="py-16 bg-white" id="blog">
       <div className="container mx-auto px-4">
@@ -84,7 +97,7 @@ export default function BlogPreview({ posts }: BlogPreviewProps) {
 
                 <div className="p-6">
                   {/* Category */}
-                  <div className="inline-block px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full mb-3">
+                  <div className={`inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3 ${getCategoryColor(post.category)}`}>
                     {post.category}
                   </div>
 

@@ -8,7 +8,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
   full_name TEXT,
+  email TEXT,
   phone TEXT,
+  is_admin BOOLEAN DEFAULT false NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -111,6 +113,7 @@ CREATE TABLE public.online_courses_progress (
 );
 
 -- Create indexes for better performance
+CREATE INDEX idx_profiles_is_admin ON public.profiles(is_admin);
 CREATE INDEX idx_lessons_date ON public.lessons(lesson_date);
 CREATE INDEX idx_lessons_instructor ON public.lessons(instructor_id);
 CREATE INDEX idx_lessons_status ON public.lessons(status);
@@ -191,10 +194,12 @@ CREATE POLICY "Users can update their own course progress" ON public.online_cour
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, full_name)
+  INSERT INTO public.profiles (id, full_name, email, is_admin)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', '')
+    COALESCE(NEW.raw_user_meta_data->>'full_name', ''),
+    NEW.email,
+    false
   );
   RETURN NEW;
 END;

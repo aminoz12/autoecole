@@ -17,21 +17,25 @@ import { createClient } from '@/lib/supabase/client'
 import AdminStats from './AdminStats'
 import ArticleManagement from './ArticleManagement'
 import ReservationManagement from './ReservationManagement'
+import UserManagement from './UserManagement'
+import CalendarManagement from './CalendarManagement'
 
 interface AdminDashboardProps {
   user: any
   reservations: any[]
   blogPosts: any[]
   quizResults: any[]
+  profiles: any[]
 }
 
-type TabType = 'dashboard' | 'articles' | 'reservations' | 'users' | 'settings'
+type TabType = 'dashboard' | 'articles' | 'reservations' | 'calendar' | 'users' | 'settings'
 
 export default function AdminDashboard({ 
   user, 
   reservations, 
   blogPosts, 
-  quizResults 
+  quizResults,
+  profiles
 }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -46,6 +50,7 @@ export default function AdminDashboard({
     { id: 'dashboard' as TabType, name: 'Tableau de bord', icon: LayoutDashboard },
     { id: 'articles' as TabType, name: 'Articles', icon: FileText },
     { id: 'reservations' as TabType, name: 'Réservations', icon: Calendar },
+    { id: 'calendar' as TabType, name: 'Calendrier', icon: Calendar },
     { id: 'users' as TabType, name: 'Utilisateurs', icon: Users },
     { id: 'settings' as TabType, name: 'Paramètres', icon: Settings },
   ]
@@ -139,6 +144,7 @@ export default function AdminDashboard({
               reservations={reservations}
               blogPosts={blogPosts}
               quizResults={quizResults}
+              profiles={profiles}
             />
           )}
 
@@ -150,13 +156,12 @@ export default function AdminDashboard({
             <ReservationManagement reservations={reservations} />
           )}
 
+          {activeTab === 'calendar' && (
+            <CalendarManagement />
+          )}
+
           {activeTab === 'users' && (
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Gestion des utilisateurs
-              </h3>
-              <p className="text-gray-600">À venir...</p>
-            </div>
+            <UserManagement profiles={profiles} />
           )}
 
           {activeTab === 'settings' && (
